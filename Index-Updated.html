@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Church Attendance POS</title>
+  <style>
+    :root{--bg:#f6f7f5;--panel:#fff;--ink:#202923;--muted:#66716a;--line:#dfe5df;--green:#216b45;--green-bg:#e8f3eb;--red:#a83232;--red-bg:#fbecec;--blue:#315b83;--blue-bg:#eaf0f6;--shadow:0 2px 8px rgba(24,39,32,.035)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a9c3ff;outline-offset:2px}
+    .app{min-height:100vh}.topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,42px);gap:16px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{width:42px;height:42px;border-radius:10px;background:#216b45;color:white;display:grid;place-items:center;font-size:20px}.brand h1{font-size:17px;margin:0;font-weight:750;letter-spacing:-.3px}.brand p{margin:2px 0 0;font-size:12px;color:var(--muted)}.top-actions{display:flex;align-items:center;gap:10px}.pill{font-size:12px;border:1px solid var(--line);padding:7px 10px;border-radius:999px;color:#4e5b67;background:#fff}.wrap{max-width:1250px;margin:0 auto;padding:28px clamp(14px,3vw,32px) 44px}.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:22px}.eyebrow{text-transform:uppercase;letter-spacing:1.4px;font-size:11px;font-weight:800;color:var(--green);margin:0 0 7px}.page-head h2{font-size:clamp(25px,3vw,34px);line-height:1.15;letter-spacing:-1px;margin:0}.page-head p{color:var(--muted);margin:8px 0 0;max-width:650px}.datebox{background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 12px;min-width:205px;box-shadow:var(--shadow)}.datebox label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin-bottom:5px}.datebox input,.datebox select{border:0;outline:none;width:100%;font-weight:700;color:var(--ink);background:transparent;min-height:28px;cursor:pointer}
+    /* Keep native date dropdown options readable on mobile browsers. */
+    .datebox select{color:#202923;color-scheme:light}
+    .datebox select option{background:#ffffff;color:#202923}
+    body[data-theme="dark"] .datebox select{color:#edf4ee;color-scheme:dark}
+    body[data-theme="dark"] .datebox select option{background:#18211b;color:#edf4ee}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px 17px;display:flex;align-items:center;gap:12px;box-shadow:none}.stat-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px}.stat:nth-child(1) .stat-icon{background:var(--blue-bg)}.stat:nth-child(2) .stat-icon{background:var(--green-bg)}.stat:nth-child(3) .stat-icon{background:var(--red-bg)}.stat .label{font-size:12px;color:var(--muted);font-weight:650}.stat .value{font-size:25px;line-height:1.2;font-weight:800;letter-spacing:-.6px;margin-top:3px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:none;overflow:hidden}.card-head{padding:19px 21px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.card-head h3{margin:0;font-size:16px;letter-spacing:-.2px}.card-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.count-badge{background:#f0f3f7;color:#4f5d6b;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:750;white-space:nowrap}.toolbar{padding:15px 20px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line)}.search{position:relative;flex:1;min-width:120px}.search span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#87919c;font-size:18px}.search input{width:100%;height:42px;border:1px solid var(--line);border-radius:8px;padding:0 12px 0 38px;background:#fff}.btn{border:1px solid var(--line);background:white;border-radius:8px;padding:10px 13px;font-weight:700;font-size:13px;min-height:42px;color:#33404c;white-space:nowrap}.btn:hover{background:#f7f9fb}.btn-primary{background:var(--green);border-color:var(--green);color:white}.btn-primary:hover{background:#116b3b}.btn-soft{background:#f1f6f3;color:var(--green);border-color:#d6e9dd}.btn-danger{color:var(--red);background:#fff;border-color:#f1caca}.list-head{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;color:var(--muted);font-size:12px;background:#fbfcfd;border-bottom:1px solid var(--line)}.list-head label{display:flex;align-items:center;gap:8px;cursor:pointer}.people-list{max-height:490px;overflow:auto}.person{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #edf0f3;min-height:65px}.person:last-child{border-bottom:0}.person:hover{background:#fbfcfd}.person input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);flex-shrink:0}.avatar{height:37px;width:37px;border-radius:50%;display:grid;place-items:center;background:#eaf0ff;color:#3157a3;font-weight:800;font-size:12px;flex-shrink:0}.person-main{min-width:0;flex:1}.person-name{font-size:14px;font-weight:700;overflow-wrap:anywhere}.person-sub{font-size:11px;color:var(--muted);margin-top:2px}.status{font-size:11px;font-weight:800;border-radius:999px;padding:5px 8px;background:var(--red-bg);color:var(--red)}.status.present{background:var(--green-bg);color:var(--green)}.empty{padding:35px 18px;text-align:center;color:var(--muted)}.empty strong{display:block;color:var(--ink);margin-bottom:4px}.side{display:flex;flex-direction:column;gap:16px}.summary-body{padding:18px 20px}.summary-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px;font-size:13px}.summary-row span:first-child{color:var(--muted)}.summary-row strong{font-variant-numeric:tabular-nums}.progress{height:8px;background:#edf0f3;border-radius:99px;overflow:hidden;display:flex;margin:13px 0 7px}.progress .present-bar{background:#28a45c;width:0;transition:width .15s}.progress-label{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}.save-btn{width:100%;margin-top:18px;padding:13px 14px;font-size:14px}.note{margin-top:12px;font-size:11px;color:var(--muted);line-height:1.5}.manage-body{padding:17px 20px}.manage-body p{font-size:12px;color:var(--muted);margin:0 0 14px}.manage-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.manage-actions .btn{white-space:normal;min-height:42px}.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px;font-size:11px;color:var(--muted)}.legend span{display:flex;align-items:center;gap:6px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.green{background:#28a45c}.dot.red{background:#d64b54}.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#17212b;color:white;padding:12px 17px;border-radius:11px;box-shadow:var(--shadow);font-size:13px;transition:.2s;z-index:20;max-width:calc(100% - 28px)}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:rgba(14,25,35,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal-backdrop.open{display:flex}.modal{background:#fff;border-radius:12px;width:min(440px,100%);padding:23px;box-shadow:0 12px 36px rgba(0,0,0,.16)}.modal h3{margin:0 0 7px;font-size:20px}.modal p{color:var(--muted);font-size:13px;margin:0 0 18px}.field{display:block;margin-bottom:14px}.field span{display:block;font-size:12px;font-weight:750;margin-bottom:6px}.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.footer{text-align:center;color:#87919c;font-size:11px;margin-top:22px}.demo-label{display:inline-flex;align-items:center;gap:6px;background:#fff8e6;color:#8a5a00;border:1px solid #f2dfad;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:750}
+    body[data-theme="dark"]{--bg:#101713;--panel:#18211b;--ink:#edf4ee;--muted:#a5b3a8;--line:#344238;--green:#71d69a;--green-bg:#203d2b;--red:#ff8989;--red-bg:#442626;--blue:#a8c8ef;--blue-bg:#24364b;--shadow:0 2px 10px rgba(0,0,0,.18);color-scheme:dark}
+    body[data-theme="dark"] .topbar,body[data-theme="dark"] .card,body[data-theme="dark"] .datebox,body[data-theme="dark"] .modal{background:var(--panel);color:var(--ink)}
+    body[data-theme="dark"] .pill,body[data-theme="dark"] .btn,body[data-theme="dark"] .search input,body[data-theme="dark"] .field input{background:#202c24;color:var(--ink);border-color:var(--line)}
+    body[data-theme="dark"] .btn:hover{background:#29382e}
+    body[data-theme="dark"] .btn-primary{background:#237648;border-color:#237648;color:#fff}
+    body[data-theme="dark"] .btn-soft{background:#203d2b;color:#8be0a9;border-color:#345b40}
+    body[data-theme="dark"] .btn-danger{background:#382222;color:#ffaaaa;border-color:#633737}
+    body[data-theme="dark"] .list-head,body[data-theme="dark"] .person:hover{background:#1d2921}
+    body[data-theme="dark"] .person{border-bottom-color:#2b382f}
+    body[data-theme="dark"] .count-badge{background:#26332a;color:#d2e1d5}
+    body[data-theme="dark"] .progress{background:#2c3930}
+    body[data-theme="dark"] .modal-backdrop{background:rgba(0,0,0,.68)}
+    body[data-theme="dark"] .demo-label{background:#3c321d;color:#f2d28a;border-color:#66532b}
+    body[data-theme="dark"] .avatar{background:#263b58;color:#c2d8ff}
+    body[data-theme="dark"] .datebox input,body[data-theme="dark"] .datebox select{color:var(--ink)}
+    body[data-theme="dark"] .footer{color:#a5b3a8}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    input,select,button{accent-color:var(--green)}
+    .btn:focus-visible{outline:3px solid #9bb9a7;outline-offset:2px}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+    .date-nav{display:flex;align-items:center;gap:8px}.date-arrow{min-width:42px;height:100%;min-height:58px;font-size:22px;line-height:1;padding:0 12px}.date-arrow:disabled{opacity:.4;cursor:not-allowed}
+    .pill.connected{background:#e8f3eb;color:#216b45;border-color:#cfe6d6;font-weight:700}.pill.failed{background:#fdeced;color:#b3363f;border-color:#f1caca;font-weight:700}
+    body[data-theme="dark"] .pill.connected{background:#1f3a29;color:#8fd9a8;border-color:#2f5a3d}body[data-theme="dark"] .pill.failed{background:#3d2226;color:#f0a0a6;border-color:#6a343a}
+    @media(max-width:850px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.people-list{max-height:440px}.page-head{align-items:stretch;flex-direction:column}.datebox{max-width:300px}.topbar{height:65px}.date-nav{justify-content:flex-start}}
+    @media(max-width:560px){.wrap{padding-top:20px}.stats{gap:8px}.stat{padding:12px 10px;gap:8px;align-items:flex-start;flex-direction:column}.stat-icon{width:32px;height:32px;font-size:16px;border-radius:9px}.stat .value{font-size:22px}.stat .label{font-size:11px}.toolbar{padding:12px;flex-wrap:wrap}.toolbar .search{flex-basis:100%}.toolbar .btn{flex:1}.card-head{padding:16px}.person{padding:11px 13px;gap:9px}.list-head{padding:11px 13px}.side{grid-template-columns:1fr}.brand h1{font-size:15px}.brand p{font-size:11px}.top-actions .btn{padding:8px 10px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">✦</div>
+      <div><h1>Church Attendance</h1><p>Simple service check-in</p></div>
+    </div>
+    <div class="top-actions"><span class="pill" id="statusPill" role="status">○ Not connected</span><button class="btn" id="themeToggle" type="button" aria-label="Switch to dark theme">☾ Dark theme</button><button class="btn" id="refreshBtn" type="button" title="Reload people, dates, and saved attendance">↻ Refresh</button><button class="btn" id="manageTopBtn">＋ Add person</button></div>
+  </header>
+  <main class="wrap">
+    <div class="page-head">
+      <div><p class="eyebrow">Attendance POS</p><h2>Who attended today?</h2><p>Choose one of the dates listed in your existing 2026 attendance table, search for people, and select everyone who is present.</p></div>
+      <div class="date-nav"><button class="btn date-arrow" id="prevDateBtn" type="button" aria-label="Previous date" title="Previous date">‹</button><div class="datebox"><label for="serviceDate">SERVICE DATE · 2026 TABLE DATES</label><select id="serviceDate" aria-label="Choose a date listed in the attendance spreadsheet"></select></div><button class="btn date-arrow" id="nextDateBtn" type="button" aria-label="Next date" title="Next date">›</button></div>
+    </div>
+    <section class="stats" aria-label="Attendance totals">
+      <div class="stat"><div class="stat-icon">♙</div><div><div class="label">Total active people</div><div class="value" id="totalCount">0</div></div></div>
+      <div class="stat"><div class="stat-icon">✓</div><div><div class="label">Marked present</div><div class="value" id="presentCount">0</div></div></div>
+      <div class="stat"><div class="stat-icon">—</div><div><div class="label">Will be marked absent</div><div class="value" id="absentCount">0</div></div></div>
+    </section>
+    <div class="layout">
+      <section class="card">
+        <div class="card-head"><div><h3>People list</h3><p>Search names and select multiple people.</p></div><span class="count-badge" id="shownCount">0 people</span></div>
+        <div class="toolbar">
+          <div class="search"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search a name..." autocomplete="off" aria-label="Search people by name" /></div>
+          <button class="btn btn-soft" id="selectResultsBtn">Select results</button>
+          <button class="btn" id="clearBtn">Clear selection</button>
+        </div>
+        <div class="list-head"><label><input id="selectAllVisible" type="checkbox" /> Select all visible</label><span id="selectionLabel">0 selected</span></div>
+        <div class="people-list" id="peopleList"></div>
+      </section>
+      <aside class="side">
+        <section class="card">
+          <div class="card-head"><div><h3>Attendance summary</h3><p>Review before saving.</p></div></div>
+          <div class="summary-body">
+            <div class="summary-row"><span>Service date</span><strong id="summaryDate">—</strong></div>
+            <div class="summary-row"><span>Present</span><strong id="summaryPresent">0 people</strong></div>
+            <div class="summary-row"><span>Absent</span><strong id="summaryAbsent">0 people</strong></div>
+            <div class="progress"><div class="present-bar" id="presentBar"></div></div>
+            <div class="progress-label"><span id="presentPercent">0% present</span><span id="absentPercent">100% absent</span></div>
+            <button class="btn btn-primary save-btn" id="saveBtn">✓ &nbsp; Save attendance</button>
+            <div class="note">Saving marks selected people <b>Present (P)</b> and every other active person <b>Absent (A)</b> for this date. Review the list before saving.</div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div><h3>People management</h3><p>Keep your people list up to date.</p></div></div>
+          <div class="manage-body"><p>Add a new person or remove someone from the active list. Removing a person should preserve their past attendance records when connected to your spreadsheet.</p><div class="manage-actions"><button class="btn btn-primary" id="addBtn">＋ Add person</button><button class="btn" id="removeBtn">Archive selected</button></div><div class="legend"><span><i class="dot green"></i> Present</span><span><i class="dot red"></i> Absent if not selected</span></div></div>
+        </section>
+      </aside>
+    </div>
+    <div class="footer"><span class="demo-label">● PREVIEW ONLY</span><p>This preview uses names and 2026 date headings. Changes stay in this page and are not saved to Google Sheets until Apps Script is connected.</p></div>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal"><h3 id="modalTitle">Add a person</h3><p id="modalDescription">Add someone to the active church attendance list.</p><label class="field"><span>Full name</span><input id="personNameInput" type="text" maxlength="120" placeholder="Enter person's name" /></label><div class="modal-actions"><button class="btn" id="cancelModalBtn">Cancel</button><button class="btn btn-primary" id="confirmModalBtn">Add person</button></div></div>
+</div>
+<script>
+  // Front-end preview only. The next step will connect these actions to Google Apps Script.
+  const initialPeople = [
+    "Sheantle Faith Cabural (Faith)",
+    "Israel Balgos III (Rael)",
+    "Grace Aranda (Ace)",
+    "Isiah Balgos (Isiah)",
+    "Sharmaine Lorraine Saludez (Sha)",
+    "Miyarah Nicole Sese (Miyah)",
+    "John Carlo Lorian (Jc)",
+    "Ashanti Jeremea Belles (Ash/AJ)",
+    "Praisel Belles (Aisel)",
+    "Uanne Natividad (Uanne)",
+    "Prince Herera (Prince)",
+    "Alejo Jay Estacio (Aj)",
+    "Alea Fathma Hilado (Alea)",
+    "Lukas Ibay (Lukas)",
+    "John Arman Gemeniano (Arman)",
+    "Eloiza Iza Liwanag Bajado Iza)",
+    "Orrise Leonor Vega (Orrise)",
+    "Marlon Lao (Lon)",
+    "Precious Abrenica (Preice)",
+    "Hannah Renesmaine Gloriana",
+    "Benjamin Joseph Hilario (Bj)",
+    "Naomi Abrenica (Nami)",
+    "Kamikazee Bautista (Kazey)",
+    "Denzel Cruz (Denden)",
+    "Marc Abhel B. Caampued (Aki)",
+    "Mary Joy Lorian (Joy)",
+    "Almaira Lorian (Nang)",
+    "Faith Skylie Lorian Sevilla (Faith)",
+    "Nicole Lorian (Nicole)",
+    "Princess Jennifer Lorian (Cess)",
+    "Nathalie Lorian (Nathalie)",
+    "Tanggol Lorian (Tanggol)",
+    "Shane  L. Mercado (Shanshan)",
+    "Jocel Bermab",
+    "Jhaz Gaspar (Gaspar)",
+    "Mary Clarisse B. Gaspar",
+    "Shamiela Valdez",
+    "Zion Aaron Villanueva",
+    "Amelia Villion",
+    "Era Athena M. Puno",
+    "Joseph Lio Barbosa",
+    "Ibrahim C. Balgos",
+    "Paul Jake Castro",
+    "Nathaniel Turpis",
+    "Zyrine Turpis",
+    "Rhiana Faye Gache",
+    "Twinklevielle Alviar",
+    "Kris William C. Lampanizo",
+    "Maverick Jonash M. Bellen",
+    "Brent Michael Sese",
+    "Jasmine P. Cruz",
+    "Skyler J. Lampa",
+    "Charles Salvador N. Fermanes",
+    "Princess Dharly C. Delfonso",
+    "Jovygail C. Liquigan",
+    "Prince Liam Teano (Liam)",
+    "Adriel Josiah Gomez (Aj kulot)",
+    "Xyrus Hoy",
+    "Jeremiah Joseph Hilario (JJ)",
+    "Analea Joseph Cariaso",
+    "Leanna P. Barroga",
+    "Ervin Jr. Delacruz",
+    "Andrew Ibarra",
+    "Anamika Ibarra",
+    "Lucky Sison",
+    "Alexis Marbella",
+    "Sean Dulay",
+    "Ryza Turpis",
+    "Aiko Caballes",
+    "Clive Kiros Orias",
+    "Cristine Joy Saludez",
+    "Cyril Gayle Ladero",
+    "Divine Casmirio",
+    "Emmanuel Ibay",
+    "Gemuel Valeriano Galang",
+    "Faith Aranda",
+    "Hannah Dulay",
+    "Jameson Chavenia",
+    "Jeleine Baltazar Buensalida",
+    "Jethro Siatong",
+    "Jhonathan Ladero",
+    "John Matthew Macato",
+    "Kazemiyaki Bautista",
+    "Kyle Andrei",
+    "Mark Anthony",
+    "Mkyla Ramos",
+    "Princess Adara Dacuba",
+    "Rai Lei",
+    "Rhaizen Bustamante",
+    "Samuel Saludez",
+    "Daniel Kurtina",
+    "Stephen Mendoza",
+    "Kyrie Joaqin",
+    "Ashley Grace Gemeniano  (Ash)",
+    "Hector",
+    "Noren",
+    "Carl Felip V. David",
+    "Ryzamae M. Digman",
+    "Louise Len B. Alcorza",
+    "Samantha",
+    "Iyanna E. Doria",
+    "Sam Baudiaron",
+    "Kel Mendoza",
+    "Zyrene Lane Locreda",
+    "Kanisha Jhazz L. Locreda",
+    "Jeddah Sophia B. Cunia",
+    "Carl Justin Dizol",
+    "Roxanne Modesto",
+    "Mharlou Ibanez",
+    "Rica Joy Patricio",
+    "Rafael Geuen Estrilla",
+    "Luciana Eurize Santos",
+    "Ma. Cristela Agcaoili",
+    "Ralph Stephen",
+    "Josephine Maglaya",
+    "Edmarc Barientos",
+    "Florence Lee G. Duque",
+    "Robert Zairone D. Tigbayen",
+    "Rianne P. Roland",
+    "John Steren Patactil",
+    "Jenny Ann M. Ronquillo",
+    "Eunice Waje",
+    "Jhon Lloyd R. Sabarillo",
+    "Laurence Andrei Gines",
+    "Rondon James Bacunawa",
+    "Ronna Jane Bacunawa",
+    "Ezra Faith Iligan",
+    "Ivan Kurt Doria",
+    "Mike Daross Guado",
+    "Shaira Mae Avila",
+    "Aleiah Diaz",
+    "Mark Adrian Austria",
+    "Iverson Bacunawa",
+    "Jan Lei Austria",
+    "Lucas Indigo Malvas",
+    "Jean Christle Dominiq Cajipe",
+    "Rom Catigday",
+    "Isiel Nathan Pasado",
+    "Princess Jerrylou C. Euaristo",
+    "Marclellic Jhade A. Anzala",
+    "Ertiest Jhon D. Binva",
+    "Raymond John D. Binva",
+    "Carl-lil M. Moleno",
+    "Daniel Dauz",
+    "Jhelaine  C. Ambrosio",
+    "Emerald Nigos",
+    "Dalye Henson",
+    "John Elmer Aboy",
+    "Shakira Ibarra",
+    "King romelei Teano",
+    "Odrey Elisha Vega",
+    "Sandara Dacumos",
+    "Brionne Dionela",
+    "Angela Dacumos",
+    "Daztain Dagami",
+    "Christian Jay P. Del Carmen",
+    "Kirby Jadulan",
+    "James Ryan A. Roque",
+    "Keith Keith Santillan",
+    "Daniel Gray N. Padilla",
+    "Jeiannah Elisse O. Padilla",
+    "Precious Jheyan Y. Ochoterina",
+    "Princess Syril Petalco",
+    "Jiliane Mae Escober",
+    "Nathan Aquino",
+    "Eloah Heart A. Ilagan",
+    "Shane Jakiya P. Avila",
+    "Cassius Fritz Rodriguez",
+    "Enzo Diamante",
+    "Samantha Abria",
+    "Alexis Austria",
+    "Princess Tigno",
+    "Khea Pacayra",
+    "Keilah Brianna De Guzman",
+    "Jhan jhan Sabarre",
+    "JE Binua",
+    "Brent Castanares",
+    "Shylyn Mercado",
+    "Jushly Moira Samonte",
+    "Chellsiey Lamor",
+    "Jazz Nieckolai Gaspar",
+    "Ronald Josh Gundran jr.",
+    "Marvie Sulayao",
+    "Aira Caparas",
+    "Mikaella Guasch",
+    "Queen Mariel Valdez",
+    "IAN DENZON MIRAFLOR",
+    "James Ian Reyes",
+    "Russel James Adriano",
+    "John Lloyd",
+    "Chad Ombajin",
+    "Gianna Crisven Ramonal",
+    "Johaima Bongcarawan",
+    "Irish Montoya",
+    "Yohana Bautista",
+    "Rhea Allyson Baldo",
+    "Althea Saludez",
+    "Jhoward Profugo",
+    "Charfaye Liannecis Talavera",
+    "Clemar Latonio",
+    "Kate Cassandra Saludez",
+    "Cris Anthony Canarejo",
+    "Jarrel D",
+    "Ralph Stephen Magbanua (Baste)",
+    "Rafael Gwen Estrella",
+    "Jd Cajipe",
+    "Emerson Lao",
+    "Rouge Elijah Darcy Lao",
+    "Blessa Cantonjos",
+    "Princess Mira Casador",
+    "Shawn Jacob  Avilla",
+    "Cayden  Regino",
+    "Bernadette Atibula",
+    "Genesis P. Calamanan",
+    "Ellice Brianna Diamante",
+    "Jade Garcia",
+    "Rave Morogenia",
+    "Khert Tutor",
+    "Jonas Aboy",
+    "Roy Vince Esmedia",
+    "Bella Loreen  E. Refazo",
+    "Rochelle Angelic Balacuit",
+    "Ayesha Magat",
+    "Yakisha Magitgtano",
+    "Matteo Fojas",
+    "Kyle Justin Balgos",
+    "Kurt Andrei Callueng",
+    "Rain Lexter Belleza",
+    "Shane West Belleza",
+    "Crixxiane Lorian",
+    "Herob Mamangun (rob)",
+    "Aleenah Barbie A. Aguilar",
+    "Bella Victoria V. Rafael",
+    "King C. Andoria (Kingkong)",
+    "Jerome Pacayra",
+    "Stephanie Snow S. Magbanua",
+    "Ralph Stephen S. Magbanua",
+    "Jaiden Rosh G. Basilio",
+    "John Austine S. Quiambao",
+    "Jarel D. Naga",
+    "Jurel D. Naga",
+    "Luxybell Tolentino",
+    "Sanny",
+    "Ezekiel",
+    "Austine",
+    "Moymoy",
+    "Jc",
+    "Crixus",
+    "Shielamier Singh",
+    "Cristoff Caranejo",
+    "Cris Caranejo JR.",
+    "J. Cedric Quiambao",
+    "Megan E. Fojas",
+    "Shany",
+    "Xylyn Bernadeth M. Corpinio",
+    "Darren M. Casimirio",
+    "Sophia Dominguez",
+    "Chloe Dominguez",
+    "Jeric Moses Euterro Reyes Legaspi",
+    "Margareth Mariñas",
+    "Kevin Cabalquinto",
+    "Aleah Collado",
+    "Persimaine Alfaro",
+    "Luciville S. Tolentino",
+    "Jem Harriete Cardeño",
+    "Ryan Beringuel",
+    "John Daryl Felix",
+    "Dianna Joy A. Agosto",
+    "Ashley M. Cano",
+    "Vincent Marzhal G. Valenzuela",
+    "Janie Jhay Tañon",
+    "Janmel M. Mista",
+    "Vince Yuan S. Bataller",
+    "Cherry Basas",
+    "Gina Chua",
+    "James Jacob M. Gania",
+    "Rafael Dave O. Baler",
+    "Samantha Beringuel"
+];
+  let people = initialPeople.map((name, i) => ({id: i + 1, name, active: true}));
+  let selectedIds = new Set();
+  let nextId = people.length + 1;
+  let modalMode = 'add';
+  let toastTimer;
+  const $ = id => document.getElementById(id);
+  // Date choices below are taken from the month/day headers in the uploaded workbook.
+  // These are preview options; the live version will fetch the date-column map from Apps Script.
+  let availableDates = [{"value": "2026-01-17", "label": "January 17, 2026", "column": 2}, {"value": "2026-01-24", "label": "January 24, 2026", "column": 3}, {"value": "2026-01-31", "label": "January 31, 2026", "column": 4}, {"value": "2026-02-07", "label": "February 7, 2026", "column": 5}, {"value": "2026-02-14", "label": "February 14, 2026", "column": 6}, {"value": "2026-02-21", "label": "February 21, 2026", "column": 7}, {"value": "2026-02-28", "label": "February 28, 2026", "column": 8}, {"value": "2026-03-07", "label": "March 7, 2026", "column": 9}, {"value": "2026-03-14", "label": "March 14, 2026", "column": 10}, {"value": "2026-03-21", "label": "March 21, 2026", "column": 11}, {"value": "2026-03-28", "label": "March 28, 2026", "column": 12}, {"value": "2026-04-04", "label": "April 4, 2026", "column": 13}, {"value": "2026-04-11", "label": "April 11, 2026", "column": 14}, {"value": "2026-04-18", "label": "April 18, 2026", "column": 15}, {"value": "2026-04-25", "label": "April 25, 2026", "column": 16}, {"value": "2026-05-02", "label": "May 2, 2026", "column": 17}, {"value": "2026-05-09", "label": "May 9, 2026", "column": 18}, {"value": "2026-05-16", "label": "May 16, 2026", "column": 19}, {"value": "2026-05-23", "label": "May 23, 2026", "column": 20}, {"value": "2026-05-30", "label": "May 30, 2026", "column": 21}, {"value": "2026-06-06", "label": "June 6, 2026", "column": 22}, {"value": "2026-06-13", "label": "June 13, 2026", "column": 23}, {"value": "2026-06-20", "label": "June 20, 2026", "column": 24}, {"value": "2026-06-27", "label": "June 27, 2026", "column": 25}, {"value": "2026-07-06", "label": "July 6, 2026", "column": 26}, {"value": "2026-07-11", "label": "July 11, 2026", "column": 27}, {"value": "2026-07-18", "label": "July 18, 2026", "column": 28}, {"value": "2026-07-25", "label": "July 25, 2026", "column": 29}, {"value": "2026-08-01", "label": "August 1, 2026", "column": 30}, {"value": "2026-08-08", "label": "August 8, 2026", "column": 31}, {"value": "2026-08-15", "label": "August 15, 2026", "column": 32}, {"value": "2026-08-22", "label": "August 22, 2026", "column": 33}, {"value": "2026-08-29", "label": "August 29, 2026", "column": 34}, {"value": "2026-09-05", "label": "September 5, 2026", "column": 35}, {"value": "2026-09-12", "label": "September 12, 2026", "column": 36}, {"value": "2026-09-19", "label": "September 19, 2026", "column": 37}, {"value": "2026-09-26", "label": "September 26, 2026", "column": 38}, {"value": "2026-10-03", "label": "October 3, 2026", "column": 39}, {"value": "2026-10-10", "label": "October 10, 2026", "column": 40}, {"value": "2026-10-13", "label": "October 13, 2026", "column": 41}, {"value": "2026-10-24", "label": "October 24, 2026", "column": 42}, {"value": "2026-10-31", "label": "October 31, 2026", "column": 43}, {"value": "2026-11-07", "label": "November 7, 2026", "column": 44}, {"value": "2026-11-14", "label": "November 14, 2026", "column": 45}, {"value": "2026-11-21", "label": "November 21, 2026", "column": 46}, {"value": "2026-11-28", "label": "November 28, 2026", "column": 47}, {"value": "2026-12-05", "label": "December 5, 2026", "column": 48}, {"value": "2026-12-12", "label": "December 12, 2026", "column": 49}, {"value": "2026-12-19", "label": "December 19, 2026", "column": 50}, {"value": "2026-12-26", "label": "December 26, 2026", "column": 51}];
+  $('serviceDate').innerHTML = availableDates.map(d => `<option value="${d.value}" data-column="${d.column}">${escapeHtml(d.label)}</option>`).join('');
+  const localNow = new Date();
+  const todayISO = `${localNow.getFullYear()}-${String(localNow.getMonth()+1).padStart(2,'0')}-${String(localNow.getDate()).padStart(2,'0')}`;
+  $('serviceDate').value = availableDates.some(d => d.value === todayISO) ? todayISO : (availableDates[availableDates.length-1]?.value || '');
+
+  function escapeHtml(value) { return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  function initials(name) { return name.trim().split(/\s+/).slice(0,2).map(part => part[0] || '').join('').toUpperCase(); }
+  function activePeople() { return people.filter(person => person.active); }
+  function filteredPeople() {
+    const q = $('searchInput').value.trim().toLocaleLowerCase();
+    return activePeople().filter(person => person.name.toLocaleLowerCase().includes(q));
+  }
+  function render() {
+    const active = activePeople();
+    const filtered = filteredPeople();
+    $('peopleList').innerHTML = filtered.length ? filtered.map(person => {
+      const checked = selectedIds.has(person.id);
+      return `<label class="person"><input type="checkbox" class="person-check" data-id="${person.id}" ${checked ? 'checked' : ''} aria-label="Mark ${escapeHtml(person.name)} present"><span class="avatar">${escapeHtml(initials(person.name))}</span><span class="person-main"><span class="person-name">${escapeHtml(person.name)}</span><span class="person-sub">Church attendee</span></span><span class="status ${checked ? 'present' : ''}">${checked ? 'Present' : 'Absent'}</span></label>`;
+    }).join('') : '<div class="empty"><strong>No names found</strong>Try another search or add a person.</div>';
+    const present = active.filter(person => selectedIds.has(person.id)).length;
+    const absent = Math.max(0, active.length - present);
+    const percent = active.length ? Math.round(present / active.length * 100) : 0;
+    $('totalCount').textContent = active.length;
+    $('presentCount').textContent = present;
+    $('absentCount').textContent = absent;
+    $('shownCount').textContent = `${filtered.length} ${filtered.length === 1 ? 'person' : 'people'}`;
+    $('selectionLabel').textContent = `${present} selected`;
+    $('summaryDate').textContent = formatDate($('serviceDate').value);
+    $('summaryPresent').textContent = `${present} ${present === 1 ? 'person' : 'people'}`;
+    $('summaryAbsent').textContent = `${absent} ${absent === 1 ? 'person' : 'people'}`;
+    $('presentBar').style.width = `${percent}%`;
+    $('presentPercent').textContent = `${percent}% present`;
+    $('absentPercent').textContent = `${100-percent}% absent`;
+    const visibleIds = filtered.map(p => p.id);
+    const visibleSelected = visibleIds.filter(id => selectedIds.has(id)).length;
+    $('selectAllVisible').checked = visibleIds.length > 0 && visibleSelected === visibleIds.length;
+    $('selectAllVisible').indeterminate = visibleSelected > 0 && visibleSelected < visibleIds.length;
+  }
+  function formatDate(value) {
+    if (!value) return 'Choose date';
+    const d = new Date(`${value}T12:00:00`);
+    return d.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+  }
+  function showToast(message) {
+    $('toast').textContent = message;
+    $('toast').classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => $('toast').classList.remove('show'), 3000);
+  }
+  function openModal() {
+    modalMode = 'add';
+    $('modalTitle').textContent = 'Add a person';
+    $('modalDescription').textContent = 'Add someone to the active church attendance list.';
+    $('confirmModalBtn').textContent = 'Add person';
+    $('personNameInput').value = '';
+    $('modalBackdrop').classList.add('open');
+    setTimeout(() => $('personNameInput').focus(), 50);
+  }
+  function closeModal() { $('modalBackdrop').classList.remove('open'); }
+  function addPerson() {
+    const name = $('personNameInput').value.trim().replace(/\s+/g, ' ');
+    if (!name) { $('personNameInput').focus(); showToast('Please enter a name first.'); return; }
+    const duplicate = activePeople().some(person => person.name.toLocaleLowerCase() === name.toLocaleLowerCase());
+    if (duplicate) { showToast('That name is already on the active list.'); return; }
+    people.push({id: nextId++, name, active: true});
+    closeModal();
+    $('searchInput').value = '';
+    render();
+    showToast(`${name} added to this preview only.`);
+  }
+  function removeSelected() {
+    const ids = [...selectedIds];
+    if (!ids.length) { showToast('Select one or more people to remove.'); return; }
+    const names = activePeople().filter(person => selectedIds.has(person.id)).map(person => person.name);
+    if (!confirm(`Remove ${names.length} ${names.length === 1 ? 'person' : 'people'} from the active list? This demo only changes the preview; the connected version will archive people to preserve past attendance.`)) return;
+    people = people.map(person => selectedIds.has(person.id) ? {...person, active:false} : person);
+    selectedIds.clear();
+    render();
+    showToast(`${names.length} ${names.length === 1 ? 'person' : 'people'} archived in this preview.`);
+  }
+  function saveAttendance() {
+    const date = $('serviceDate').value;
+    if (!date) { showToast('Please choose an attendance date.'); $('serviceDate').focus(); return; }
+    const active = activePeople();
+    const present = active.filter(person => selectedIds.has(person.id));
+    const absent = active.length - present.length;
+    const ok = confirm(`Save attendance for ${formatDate(date)}?\n\nPresent (P): ${present.length}\nAbsent (A): ${absent}\n\nEveryone not selected will be marked Absent for this date.`);
+    if (!ok) return;
+    // TODO (Google Apps Script integration): call google.script.run.saveAttendance(date, presentIds).
+    showToast('Not saved: this is a preview. Connect Apps Script to write attendance to Google Sheets.');
+  }
+  $('peopleList').addEventListener('change', event => {
+    const input = event.target.closest('.person-check');
+    if (!input) return;
+    const id = Number(input.dataset.id);
+    if (input.checked) selectedIds.add(id); else selectedIds.delete(id);
+    render();
+  });
+  $('searchInput').addEventListener('input', render);
+  $('serviceDate').addEventListener('change', render);
+  $('selectAllVisible').addEventListener('change', event => {
+    filteredPeople().forEach(person => event.target.checked ? selectedIds.add(person.id) : selectedIds.delete(person.id));
+    render();
+  });
+  $('selectResultsBtn').addEventListener('click', () => { filteredPeople().forEach(person => selectedIds.add(person.id)); render(); });
+  $('clearBtn').addEventListener('click', () => { selectedIds.clear(); render(); });
+  $('addBtn').addEventListener('click', openModal);
+  $('manageTopBtn').addEventListener('click', openModal);
+  $('removeBtn').addEventListener('click', () => removeSelected());
+  $('saveBtn').addEventListener('click', () => saveAttendance());
+  $('cancelModalBtn').addEventListener('click', closeModal);
+  $('confirmModalBtn').addEventListener('click', () => addPerson());
+  $('personNameInput').addEventListener('keydown', event => { if (event.key === 'Enter') addPerson(); if (event.key === 'Escape') closeModal(); });
+  $('modalBackdrop').addEventListener('click', event => { if (event.target === $('modalBackdrop')) closeModal(); });
+
+  function applyTheme(theme) {
+    const dark = theme === 'dark';
+    document.body.dataset.theme = dark ? 'dark' : 'light';
+    $('themeToggle').textContent = dark ? '☀ Light theme' : '☾ Dark theme';
+    $('themeToggle').setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    try { localStorage.setItem('churchAttendanceTheme', dark ? 'dark' : 'light'); } catch (_) {}
+  }
+  let savedTheme = 'light';
+  try { savedTheme = localStorage.getItem('churchAttendanceTheme') || 'light'; } catch (_) {}
+  applyTheme(savedTheme);
+  $('themeToggle').addEventListener('click', () => applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+  function setStatus(state) {
+    const pill = $('statusPill'); if (!pill) return;
+    pill.classList.remove('connected','failed');
+    if (state === 'connected') { pill.textContent = '● Connected to spreadsheet'; pill.classList.add('connected'); }
+    else if (state === 'failed') { pill.textContent = '● Connection failed'; pill.classList.add('failed'); }
+    else pill.textContent = '○ Not connected';
+  }
+  function updateDateNav() {
+    const i = availableDates.findIndex(d => d.value === $('serviceDate').value);
+    $('prevDateBtn').disabled = i <= 0;
+    $('nextDateBtn').disabled = i < 0 || i >= availableDates.length - 1;
+  }
+  function stepDate(delta) {
+    const i = availableDates.findIndex(d => d.value === $('serviceDate').value);
+    const target = availableDates[i + delta];
+    if (!target) return;
+    $('serviceDate').value = target.value;
+    $('serviceDate').dispatchEvent(new Event('change'));
+  }
+  $('prevDateBtn').addEventListener('click', () => stepDate(-1));
+  $('nextDateBtn').addEventListener('click', () => stepDate(1));
+  $('serviceDate').addEventListener('change', updateDateNav);
+  updateDateNav();
+
+  const isAppsScript = typeof google !== 'undefined' && google.script && google.script.run;
+  function loadDateAttendance() {
+    if (!isAppsScript || !$('serviceDate').value) return;
+    google.script.run.withSuccessHandler(ids => {
+      selectedIds.clear();
+      (ids || []).forEach(id => selectedIds.add(Number(id)));
+      render();
+    }).withFailureHandler(err => showToast('Could not load attendance: ' + (err && err.message ? err.message : err)))
+      .getAttendanceForDate($('serviceDate').value);
+  }
+  function loadLiveData() {
+    if (!isAppsScript) return;
+    $('saveBtn').disabled = true;
+    google.script.run.withSuccessHandler(data => {
+      if (data && Array.isArray(data.people)) {
+        people = data.people.map(p => ({id:Number(p.id), name:String(p.name), active:p.active !== false}));
+        nextId = Math.max(0, ...people.map(p => p.id)) + 1;
+      }
+      if (data && Array.isArray(data.dates)) {
+        availableDates = data.dates;
+        $('serviceDate').innerHTML = availableDates.map(d => `<option value="${escapeHtml(d.value)}" data-column="${d.column}">${escapeHtml(d.label)}</option>`).join('');
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        $('serviceDate').value = availableDates.some(d => d.value === today) ? today : (availableDates[availableDates.length-1]?.value || '');
+      }
+      $('saveBtn').disabled = false;
+      setStatus('connected'); updateDateNav();
+      const demo = document.querySelector('.demo-label');
+      if (demo) { demo.textContent = '● CONNECTED'; demo.style.background = '#e8f3eb'; demo.style.color = '#216b45'; }
+      const foot = document.querySelector('.footer p');
+      if (foot) foot.textContent = 'Connected to Google Sheets. Attendance changes are saved to your workbook.';
+      render();
+      loadDateAttendance();
+      const refreshButton = $('refreshBtn');
+      if (refreshButton) { refreshButton.disabled = false; refreshButton.textContent = '↻ Refresh'; }
+    }).withFailureHandler(err => {
+      $('saveBtn').disabled = false;
+      const refreshButton = $('refreshBtn');
+      if (refreshButton) { refreshButton.disabled = false; refreshButton.textContent = '↻ Refresh'; }
+      setStatus('failed');
+      showToast('Could not load spreadsheet: ' + (err && err.message ? err.message : err));
+    }).getInitialData();
+  }
+
+  const previewAddPerson = addPerson;
+  addPerson = function() {
+    if (!isAppsScript) return previewAddPerson();
+    const name = $('personNameInput').value.trim().replace(/\s+/g, ' ');
+    if (!name) { $('personNameInput').focus(); showToast('Please enter a name first.'); return; }
+    $('confirmModalBtn').disabled = true;
+    google.script.run.withSuccessHandler(person => {
+      $('confirmModalBtn').disabled = false;
+      people.push({id:Number(person.id), name:person.name, active:true});
+      nextId = Math.max(nextId, Number(person.id) + 1);
+      closeModal(); $('searchInput').value = ''; render(); showToast(name + ' added.');
+    }).withFailureHandler(err => {
+      $('confirmModalBtn').disabled = false;
+      showToast('Could not add person: ' + (err && err.message ? err.message : err));
+    }).addPerson(name);
+  };
+  const previewArchivePeople = removeSelected;
+  removeSelected = function() {
+    if (!isAppsScript) return previewArchivePeople();
+    const ids = [...selectedIds];
+    if (!ids.length) { showToast('Select one or more people to archive.'); return; }
+    const names = activePeople().filter(person => selectedIds.has(person.id)).map(person => person.name);
+    if (!confirm(`Archive ${names.length} ${names.length === 1 ? 'person' : 'people'}? Past attendance records will be preserved.`)) return;
+    google.script.run.withSuccessHandler(() => {
+      people = people.map(person => selectedIds.has(person.id) ? {...person, active:false} : person);
+      selectedIds.clear(); render(); showToast(names.length + ' people archived.');
+    }).withFailureHandler(err => showToast('Could not archive people: ' + (err && err.message ? err.message : err)))
+      .archivePeople(ids);
+  };
+  const previewSaveAttendance = saveAttendance;
+  saveAttendance = function() {
+    if (!isAppsScript) return previewSaveAttendance();
+    const date = $('serviceDate').value;
+    if (!date) { showToast('Please choose an attendance date.'); return; }
+    const active = activePeople();
+    const presentIds = active.filter(person => selectedIds.has(person.id)).map(person => person.id);
+    const absent = active.length - presentIds.length;
+    if (!confirm(`Save attendance for ${formatDate(date)}?\n\nPresent (P): ${presentIds.length}\nAbsent (A): ${absent}\n\nEveryone not selected will be marked Absent for this date.`)) return;
+    $('saveBtn').disabled = true;
+    google.script.run.withSuccessHandler(result => {
+      $('saveBtn').disabled = false; showToast(result && result.message ? result.message : 'Attendance saved.');
+    }).withFailureHandler(err => {
+      $('saveBtn').disabled = false; showToast('Save failed: ' + (err && err.message ? err.message : err));
+    }).saveAttendance(date, presentIds);
+  };
+  function refreshApp() {
+    const btn = $('refreshBtn');
+    btn.disabled = true;
+    btn.textContent = '↻ Refreshing…';
+    if (!isAppsScript) {
+      render();
+      btn.disabled = false;
+      btn.textContent = '↻ Refresh';
+      showToast('Preview refreshed. Google Sheets is not connected yet.');
+      return;
+    }
+    // loadLiveData updates the people/date list, then reloads saved attendance for the selected date.
+    loadLiveData();
+  }
+  $('refreshBtn').addEventListener('click', refreshApp);
+  $('serviceDate').addEventListener('change', () => { render(); loadDateAttendance(); });
+
+  render();
+  loadLiveData();
+</script>
+</body>
+</html>
